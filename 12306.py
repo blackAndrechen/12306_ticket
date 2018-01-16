@@ -22,7 +22,10 @@ def station_code(start_station,end_station):
 def search_tick(date): #查询余票
 	url = 'https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date={}&leftTicketDTO.from_station={}&leftTicketDTO.to_station={}&purpose_codes=ADULT'.format(date,from_station,to_station)
 	response = requests.get(url).text
-	json_data = json.loads(response.strip())
+	try:
+		json_data = json.loads(response.strip())
+	except:
+		print(response)
 	json_result = json_data['data']['result']
 	result = []
 	for i in json_result:
@@ -52,12 +55,12 @@ search_result = []
 for date in dates:
 	search_result =search_result + search_tick(date)
 
-str_tick = ''	
+str_tick = ''
 for m in search_result:
 	keys = m.keys()
 	for key in keys:
 		if m[key] == '有':
 			str_tick = str_tick + str(m)
-if len(str_tick) >= 0:
+if len(str_tick) > 0:
 	send_email(str_tick)
 
